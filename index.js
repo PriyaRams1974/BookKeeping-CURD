@@ -19,9 +19,9 @@ app.get("/healthCheck", async (req, res) => {
   res.send({ status: "Success" });
   // process.exit(1);
 });
-
+console.log("process.env.dburl", process.env.dbUrl);
 mongoose
-  .connect("mongodb://localhost:27017/Library", {
+  .connect(process.env.dbUrl, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })

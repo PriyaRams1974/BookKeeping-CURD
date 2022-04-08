@@ -7,7 +7,6 @@ router.post("/addBook", async (req, res) => {
 
   try {
     let detail = req.body;
-
     console.log(detail);
     const data = new bookSchema(detail);
     const result = await data.save();
@@ -67,6 +66,26 @@ router.get("/getIndiBook", async (req, res) => {
 });
 
 // update the book details api call
+router.put("/updateBookDetail", async (req, res) => {
+  try {
+    let condition = { uuid: req.body.uuid };
+    let updateData = req.body.updateData;
+    let option = { new: true };
+    const data = await bookSchema
+      .findOneAndUpdate(condition, updateData, option)
+      .exec();
+    return res.status(200).json({
+      status: "success",
+      message: "Book detail updated successfully",
+      result: data,
+    });
+  } catch (error) {
+    console.log(error.message);
+    return res.status(400).json({ status: "failure", message: error.message });
+  }
+});
+
+// update the book details api call
 router.put("/updateBookPrice", async (req, res) => {
   try {
     let condition = { uuid: req.body.uuid };
@@ -87,10 +106,18 @@ router.put("/updateBookPrice", async (req, res) => {
 });
 
 // delete book details api call
-router.delete("/removeBookDetail/:book_uuid", async (req, res) => {
+//Postman Api Hit http://localhost:7070/api/v1/book/removeBookDetail/BOOK-B8DAA68DC05C/ZZZ
+router.delete("/removeBookDetail/:book_uuid/:book_author", async (req, res) => {
   try {
     console.log(req.params.book_uuid);
-    await bookSchema.findOneAndDelete({ uuid: req.params.book_uuid }).exec();
+    console.log(req.params.book_author);
+
+    await bookSchema
+      .findOneAndDelete({
+        uuid: req.params.book_uuid,
+        Author: req.params.book_author,
+      })
+      .exec();
     return res.status(200).json({
       status: "success",
       message: "Book details removed successfully",
